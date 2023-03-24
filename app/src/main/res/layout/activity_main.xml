@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+<!--
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+    <Button
+        android:id="@+id/btnPolaczenie"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Polacz">
+    </Button>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nasze komunikaty testowe...">
+        </TextView>
+        <Button
+            android:id="@+id/btnUstawienia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ustawienia">
+        </Button>
+    </LinearLayout>
+-->
+    <com.example.roboytesapp01.ElementyInterfejsu.EiPolaczenie
+        android:id="@+id/connection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.example.roboytesapp01.ElementyInterfejsu.EiPolaczenie>
+<!--
+    <Button
+        android:id="@+id/btnTest1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </Button>
+-->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mainFragmentContainer"
+        android:name="com.example.roboytesapp01.SterowanieFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/fragment_sterowanie"></androidx.fragment.app.FragmentContainerView>
+
+
+</LinearLayout>

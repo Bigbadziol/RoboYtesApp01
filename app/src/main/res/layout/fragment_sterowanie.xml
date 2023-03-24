@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".SterowanieFragment">
+    <!-- Panel sterowanie -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:orientation="vertical"
+        android:gravity="bottom">
+
+        <!-- przyciski sterowanie rzad I -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/btnLewoGora"
+                style="@style/btnKierunek"
+                android:contentDescription="@string/btndesc_przod_lewo"
+                android:src="@drawable/btn_lewo_gora">
+            </ImageButton>
+
+            <ImageButton
+                android:id="@+id/btnGora"
+                style="@style/btnKierunek"
+                android:contentDescription="@string/btndesc_przod"
+                android:src="@drawable/btn_gora"
+                >
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnPrawoGora"
+                style="@style/btnKierunek"
+                android:contentDescription="@string/btndesc_przod_prawo"
+                android:src="@drawable/btn_prawo_gora">
+
+            </ImageButton>
+        </LinearLayout>
+
+        <!-- przyciski sterowanie rzad II -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/btnLewoDol"
+                style="@style/btnKierunek"
+                android:contentDescription="@string/btndesc_tyl_lewo"
+                android:src="@drawable/btn_lewo_dol">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnDol"
+                style="@style/btnKierunek"
+                android:contentDescription="@string/btndesc_tyl"
+                android:src="@drawable/btn_dol">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnPrawoDol"
+                style="@style/btnKierunek"
+                android:contentDescription="@string/btndesc_tyl_prawo"
+                android:src="@drawable/btn_prawo_dol"
+                >
+            </ImageButton>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Przyciski funkcyjne-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/cardview_dark_background"
+        android:gravity="center">
+        <!-- przyciski funkcyjne rzad I -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/btnFun1"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun1"
+                android:src="@drawable/btn_fun1">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnFun2"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun2"
+                android:src="@drawable/btn_fun2">
+
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnFun3"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun3"
+                android:src="@drawable/btn_fun3">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnFun4"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun4"
+                android:src="@drawable/btn_fun4">
+            </ImageButton>
+        </LinearLayout>
+
+        <!-- przyciski funkcyjne rzad II -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/btnFun5"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun5"
+                android:src="@drawable/btn_fun5">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnFun6"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun6"
+                android:src="@drawable/btn_fun6">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnFun7"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun7"
+                android:src="@drawable/btn_fun7">
+            </ImageButton>
+            <ImageButton
+                android:id="@+id/btnFun8"
+                style="@style/btnFunkcyjny"
+                android:contentDescription="@string/btndesc_fun8"
+                android:src="@drawable/btn_fun8">
+            </ImageButton>
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

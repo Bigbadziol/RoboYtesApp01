@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="EiPolaczenie">
+
+    </declare-styleable>
+
+    <declare-styleable name="EiSuwak">
+        <attr name="param_val_description" format="string"/>
+        <attr name="param_val_value" format="integer"/>
+        <attr name="param_val_min" format="integer"/>
+        <attr name="param_val_max" format="integer" />
+    </declare-styleable>
+
+    <declare-styleable name="EiLista">
+        <attr name="param_list_description" format="string"/>
+        <attr name="param_list_values" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="EiWlacznik">
+        <attr name="param_bool_description" format="string"/>
+        <attr name="param_bool_value" format="boolean"/>
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UstawieniaFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <!-- lewa kolumna -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/teal_200">
+            <!-- tor audio -->
+            <com.example.roboytesapp01.ElementyInterfejsu.EiLista
+                android:id="@+id/lstTorAudio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:param_list_description="@string/torAudio_desc"
+                app:param_list_values="@array/arrTorAudio"/>
+            <!-- tryb audio -->
+            <com.example.roboytesapp01.ElementyInterfejsu.EiLista
+                android:id="@+id/lstTrybAudio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:param_list_description="Tryb audio"
+                app:param_list_values="@array/arrTrybAudio"
+                />
+            <!-- wybor utworu -->
+            <com.example.roboytesapp01.ElementyInterfejsu.EiLista
+                android:id="@+id/lstUtwory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:param_list_description="@string/utwor_desc"
+                app:param_list_values="@array/arrUtworyTest"/>
+
+            <!-- glosnosc muzyka -->
+            <com.example.roboytesapp01.ElementyInterfejsu.EiSuwak
+                android:id="@+id/suwGlosnoscMuzyka"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:param_val_description="Gl.muzyka:"
+                app:param_val_value="20"
+                app:param_val_min="0"
+                app:param_val_max="30"/>
+            <!-- glosnosc efekty -->
+            <com.example.roboytesapp01.ElementyInterfejsu.EiSuwak
+                android:id="@+id/suwGlosnoscEfekty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:param_val_description="Gl.efekty:"
+                app:param_val_value="20"
+                app:param_val_min="0"
+                app:param_val_max="30"/>
+            <!-- wyciszenie -->
+            <com.example.roboytesapp01.ElementyInterfejsu.EiSuwak
+                android:id="@+id/suwWyciszenie"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:param_val_description="Wyciszenie:"
+                app:param_val_value="10"
+                app:param_val_min="0"
+                app:param_val_max="15"/>
+
+
+
+            <!-- Panel przyciskow sterujacych-->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20sp"
+                android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUstawieniaPotwierdz"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/btnAkceptuj"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnUstawieniaZamknij"
+                    android:layout_width="0dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/btnZamknij"
+                    android:textAllCaps="true"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </LinearLayout> <!-- Panel przycisków sterujących -->
+        </LinearLayout>
+
+        <!-- prawa kolumna -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/teal_700">
+            <!-- prawalewa , wiersz 1(funkcyjny 1) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- przycisk funkcyjny 1(opis) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="przycisk 1 :">
+                </TextView>
+                <!-- spinner funkcyjny 1(wybor) -->
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:entries="@array/arrEfekty"
+                    tools:entries="@array/arrEfekty">
+                </Spinner>
+            </LinearLayout>
+            <!-- prawalewa , wiersz 2(funkcyjny 2) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- przycisk funkcyjny 2(opis) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="przycisk 2 :">
+                </TextView>
+                <!-- spinner funkcyjny 2(wybor) -->
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:entries="@array/arrEfekty"
+                    tools:entries="@array/arrEfekty">
+                </Spinner>
+            </LinearLayout>
+            <!-- prawalewa , wiersz 3(funkcyjny 3) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- przycisk funkcyjny 3(opis) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="przycisk 3 :">
+                </TextView>
+                <!-- spinner funkcyjny 1(wybor) -->
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:entries="@array/arrEfekty"
+                    tools:entries="@array/arrEfekty">
+                </Spinner>
+            </LinearLayout>
+            <!-- prawalewa , wiersz 4(funkcyjny 4) -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <!-- przycisk funkcyjny 4(opis) -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:text="przycisk 4 :">
+                </TextView>
+                <!-- spinner funkcyjny 1(wybor) -->
+                <Spinner
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:entries="@array/arrEfekty"
+                    tools:entries="@array/arrEfekty">
+                </Spinner>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

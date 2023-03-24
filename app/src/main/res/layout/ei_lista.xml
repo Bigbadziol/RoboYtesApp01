@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/param_list_line"
+    style="@style/panelDataLine">
+    <TextView
+        android:id="@+id/param_list_description"
+        style="@style/panelData_textView_param"
+        android:text="@string/commonCustom" />
+    <Spinner
+        android:id="@+id/param_list_spinner"
+        style="@style/panelData_spinner_medium"
+        tools:entries="@array/arrListaTest"
+         />
+</LinearLayout>

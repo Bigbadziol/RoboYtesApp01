@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- For :  EiPolaczenie class -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPolaczRobot"
+        style="@style/panelData_button"
+        android:text="@string/btnPolaczRobot_polacz"
+        android:layout_weight="1" />
+    <TextView
+        android:id="@+id/tvStatusRobot"
+        style="@style/panelData_textView_param"
+        android:text="@string/stateDisconnected"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="3"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnUstawieniaRobot"
+        style="@style/panelData_button"
+        android:text="@string/btnUstawieniaRobot"
+        android:layout_weight="1" />
+</LinearLayout>
