@@ -13,17 +13,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.roboytesapp01.ElementyInterfejsu.ConnectionState
 import com.example.roboytesapp01.databinding.ActivityMainBinding
-import com.example.roboytesapp01.ui.main.MainFragment
 import com.google.gson.JsonObject
 import java.io.IOException
 import java.io.InputStream
@@ -38,9 +37,11 @@ class MainActivity : AppCompatActivity(),ICommunicator {
     private lateinit var bind : ActivityMainBinding
 
     //BT
-    private val MESSAGE_READ = 10
-    private val MESSAGE_TOAST = 20
-    private val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB") //well known unsecured
+/// wczesniejsze podejscie , przesylanie danych pomiedzy aktywnosciami.
+///    private val MESSAGE_READ = 10
+///    private val MESSAGE_TOAST = 20
+    //uuid- ten klucz to publiczny, nie szyfrowany , pasmo poszukiwania urzadzen
+    private val uuid: UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
     private val ENDDATA_SIGNATURE = "#$!#" //Ma być to samo co w esp
     private val ROBOTNAME_SIGNATURE = "YtesRobot"
     //nazwa : YtesRobot01
@@ -51,27 +52,12 @@ class MainActivity : AppCompatActivity(),ICommunicator {
     private lateinit var bluetoothManager: BluetoothManager
     private lateinit var bluetoothAdapter : BluetoothAdapter
     private lateinit var bluetoothRobot : BluetoothDevice
-    private var isBluetoothEnabled = false;
-/*
-private val bluetoothManager by lazy {
-    applicationContext.getSystemService(BluetoothManager::class.java)
-}
-    private val bluetoothAdapter by lazy {
-        bluetoothManager?.adapter
-    }
+    private var isBluetoothEnabled = false
 
-    private val isBluetoothEnabled: Boolean
-        get() = bluetoothAdapter?.isEnabled == true
-
-    private val bluetoothRobot by lazy{
-        bluetoothAdapter?.getRemoteDevice(ROBOT_MAC)
-    }
-*/
     private val robotSparowany : Boolean = false
-
     lateinit var deviceSocket: BluetoothSocket
     var incDataBuffer =""               // data buffer
-    lateinit var dataHandler: Handler   //  handle  incomming controller data
+///    lateinit var dataHandler: Handler   //  handle  incomming controller data
     lateinit var stateHandler : Handler // to refresh CustomConnction -state
 
     //----------------------------------------------------------------------------------------------
@@ -82,7 +68,7 @@ private val bluetoothManager by lazy {
         private val mmBuffer: ByteArray = ByteArray(2048) // mmBuffer store for the stream
 
         override fun run() {
-            var numBytes: Int // bytes returned from read()
+            var numBytes: Int // ilosc odczytanych danych, ma trafic do glownej aktywnosci
             var pcgSize: Int
             var thisMessage: String
             // Keep listening to the InputStream until an exception occurs.
@@ -98,11 +84,9 @@ private val bluetoothManager by lazy {
                     Log.d(TAG, "Input stream was disconnected", e)
                     break
                 }
-                // Send the obtained bytes to the UI activity.
-                val readMsg = dataHandler.obtainMessage(
-                    MESSAGE_READ, numBytes, -1,
-                    mmBuffer)
-                readMsg.sendToTarget()
+                // Prześlij dane do głównej aktywności
+///                val readMsg = dataHandler.obtainMessage(MESSAGE_READ, numBytes, -1, mmBuffer)
+///                readMsg.sendToTarget()
             }
         }
 
@@ -113,18 +97,15 @@ private val bluetoothManager by lazy {
             } catch (e: IOException) {
                 Log.e(TAG, "Error occurred when sending data", e)
 
-                // Send a failure message back to the activity.
-                val writeErrorMsg = dataHandler.obtainMessage(MESSAGE_TOAST)
-                val bundle = Bundle().apply {
-                    putString("toast", "Couldn't send data to the other device")
-                }
-                writeErrorMsg.data = bundle
-                dataHandler.sendMessage(writeErrorMsg)
+                // Prześlij informacje o nie powodzeniu
+///                val writeErrorMsg = dataHandler.obtainMessage(MESSAGE_TOAST)
+/////                val bundle = Bundle().apply {
+/////                    putString("toast", "Couldn't send data to the other device")
+/////                }
+///                writeErrorMsg.data = bundle
+///                dataHandler.sendMessage(writeErrorMsg)
                 return
             }
-            // Share the sent message with the UI activity.
-            //Wywalic kompletnie po testach
-            //val writtenMsg = dataHandler.obtainMessage(MESSAGE_WRITE, -1, -1, mmBuffer)
         }
 
         // Call this method from the main activity to shut down the connection.
@@ -147,10 +128,8 @@ private val bluetoothManager by lazy {
             if (!deviceSocket.isConnected) return@runOnUiThread
             incDataBuffer += thisData
             if (incDataBuffer.contains(ENDDATA_SIGNATURE)){
-                //               INCOMMING_ESP_DATA = INCOMMING_ESP_DATA.removeSuffix(ESP_END_DATA_SIGNATURE)
                 incDataBuffer = incDataBuffer.substringBefore(ENDDATA_SIGNATURE)
                 Log.d(TAG,"(incData) : , end of data signature")
-////
                 bind.connection.selectedDevice?.let{
                     when {
                         it.name.contains(ROBOTNAME_SIGNATURE,ignoreCase = true)->{
@@ -167,7 +146,6 @@ private val bluetoothManager by lazy {
                         bind.connection.setState(ConnectionState.CONNECTED)
                     }
                 }
- ////
             }//contain end data signature
         }//ui thread
     }
@@ -180,8 +158,7 @@ private val bluetoothManager by lazy {
 
         @SuppressLint("MissingPermission")
         override fun run() {
-            // Cancel discovery because it otherwise slows down the connection.
-//1 bez save call
+            // Wyszukiwanie urządzeń spowalnia transfer, zatem przerywamy profilaktycznie.
             bluetoothAdapter?.cancelDiscovery()
             mmSocket?.let { socket ->
                 Log.d(TAG, "[Connect Thread] - > connecting to socket")
@@ -198,11 +175,9 @@ private val bluetoothManager by lazy {
 
                 val cmdWelcome= JsonObject()
                 cmdWelcome.addProperty("cmd","DANE_PROSZE")
-                //cmdWelcome.addProperty("cmdId",0)
                 if (deviceSocket.isConnected){
                     //Uwaga znak '\n' jest niezbedny , poniewaz informuje kontroler o koncu komunikatu
                     val cmd = cmdWelcome.toString()+'\n'
-                    //val cmd2="<{\"cmd\":\"DANE_PROSZE\"}>\n"
                     Log.d(TAG,"[Connect Thread] welcome -> $cmd")
                     ConnectedThread(deviceSocket).write(cmd.toByteArray())
                 }else{
@@ -230,8 +205,9 @@ private val bluetoothManager by lazy {
         bind = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bind.root)
 
-        Log.d(TAG,"Main activity :  1.23")
-        gotBTPerms(this,true);
+        Log.d(TAG,"Main activity :  1.24")
+        Log.d(TAG,"25.03.2023")
+        gotBTPerms(this,true)
         replaceFragment(WitajFragment(),"") //Fragment powitalny
 
         bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -241,7 +217,7 @@ private val bluetoothManager by lazy {
         Log.d(TAG,"Robot sparowany : ${czyRobotSparowany()}")
 
         stateHandler = Handler(Looper.getMainLooper())
-        dataHandler = Handler(Looper.getMainLooper())
+ ///       dataHandler = Handler(Looper.getMainLooper())
 
         val enableBluetoothLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -346,7 +322,7 @@ private val bluetoothManager by lazy {
     }
 
     /**
-     *
+     * Zamiana zawartości głównego kontenera fragmentów wskazanym.
      */
     private fun replaceFragment(fragment: Fragment, data : String){
         val fragmentManager = supportFragmentManager
@@ -359,22 +335,28 @@ private val bluetoothManager by lazy {
         fragmentTransaction.commit()
     }
 
+    /**
+     * Obsługa informacji zwrotnej z fragmentu odpowiedzialnego za sterowanie robotem
+     */
     override fun kanalSterowanie(msg: String) {
         Log.d(TAG,"(MainActivity) wiadomosc od(sterowanie): $msg")
         if (deviceSocket.isConnected){
             //Uwaga! znak '\n' informuje kontroler o koncu komunikatu, niezbedny
-            val msgEnd = msg + '\n';
+            val msgEnd = msg + '\n'
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())
         }else{
             Log.d(TAG,"(MainActivity)(ch:sterowanie)-> Socket nie polaczony!")
         }
     }
 
+    /**
+     * Obsługa informacji zwrotnej od fragmentu odpowiedzialnego za ustawienia.
+     */
     override fun kanalUstawienia(msg: String) {
         Log.d(TAG,"(MainActivity) wiadomosc od(ustawienia): $msg")
         if (deviceSocket.isConnected){
             //Uwaga! znak '\n' informuje kontroler o koncu komunikatu, niezbedny
-            val msgEnd = msg + '\n';
+            val msgEnd = msg + '\n'
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())
         }else{
             Log.d(TAG,"(MainActivity)(ch:ustawienia)-> Socket nie polaczony!")
@@ -386,7 +368,7 @@ private val bluetoothManager by lazy {
      *  inaczej jest do Androida 11 a inaczej od Androida 12 sprawdzamy czy mamy wszystkie
      *  uprawnienia i testujemy wynik. True - teoretycznie mamy wszystko
      */
-    fun gotBTPerms(context: Context, showTestInLogs :Boolean ): Boolean {
+    private fun gotBTPerms(context: Context, showTestInLogs :Boolean ): Boolean {
 
         var gotAllPerms = true
         val permissionsRequired =
