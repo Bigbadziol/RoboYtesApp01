@@ -53,20 +53,6 @@ class EiPolaczenie  (
             customAttributesStyle.recycle()
         }
 
-/*
-        sp.onItemSelectedListener   = object  : AdapterView.OnItemSelectedListener{
-            @SuppressLint("MissingPermission")
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                selectedDevice = sp.adapter.getItem(position) as BluetoothDevice
-                Log.d(TAG,"(CustomConnection)(spinner selection) : ${selectedDevice!!.address}  , name : ${selectedDevice!!.name}")
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Log.d(TAG,"Bluetooth device - not selected.")
-            }
-        }
-
- */
         //selectedDevice = newDevice
     }
 
