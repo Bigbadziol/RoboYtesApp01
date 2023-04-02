@@ -47,7 +47,8 @@ class MainActivity : AppCompatActivity(),ICommunicator {
     //nazwa : YtesRobot01
     //mac :
     //pin   : 0987
-    private val ROBOT_MAC="AC:67:B2:2D:16:92"
+    //private val ROBOT_MAC="AC:67:B2:2D:16:92"  //Ytes1
+    private val ROBOT_MAC="C8:F0:9E:F4:C6:3E"  //Ytes2 - podlutowany zyroskop
 
     private lateinit var bluetoothManager: BluetoothManager
     private lateinit var bluetoothAdapter : BluetoothAdapter
