@@ -12,6 +12,8 @@ class ImageButtonMonitor(private val button: ImageButton,
                          private val msTime : Long,
                          private val sygnatura :String) : Thread() {
     private var wcisniety = false
+    private var zasobWcisniety = -1
+    private var zasobNieWcisniety = -1
 
     override fun run() {
         button.setOnClickListener {
@@ -22,12 +24,14 @@ class ImageButtonMonitor(private val button: ImageButton,
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         wcisniety = true
+                        if (zasobWcisniety != -1) button.setImageResource(zasobWcisniety)
                         sleep(msTime)
                         //button.setImageResource(R.drawable.gora_lewo_on);
                         //button.setBackground(getResources().getDrawable(R.drawable.button_is_on));
                     }
                     MotionEvent.ACTION_UP ->{
                         wcisniety = false
+                        if (zasobNieWcisniety != -1) button.setImageResource(zasobNieWcisniety)
                         sleep(msTime)
                     }
                 }
@@ -36,13 +40,13 @@ class ImageButtonMonitor(private val button: ImageButton,
             }
         })
     }
-
+/*
     fun jestWcisniety(): Boolean {
         return wcisniety
     }
-
+*/
     fun wezSygnature() : String{
-        if  (wcisniety == true) return sygnatura
+        if  (wcisniety) return sygnatura
         else return "0"
     }
 
@@ -50,4 +54,12 @@ class ImageButtonMonitor(private val button: ImageButton,
         wcisniety = false
         button.setOnTouchListener(null)
     }
+    fun ustawWcisniety(zasob : Int){
+        zasobWcisniety = zasob
+    }
+
+    fun ustawNieWcisniety(zasob : Int){
+        zasobNieWcisniety = zasob
+    }
+
 }

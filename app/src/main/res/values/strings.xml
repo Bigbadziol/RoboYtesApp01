@@ -13,11 +13,14 @@
     <string name="stateConnectionError">Błąd połączenia</string>
     <string name="stateEdition">Edycja ustawien</string>
 
-    <!-- Elementy dla EiLista, EiSuwak ......................................................... -->
+    <!-- Elementy dla EiLista, EiSuwak ,EiWlacznik,EiKolor...................................... -->
     <string name="commonCustom">Zmienny :</string>
     <string name="commonParam1">Param 1:</string>
     <string name="commonParam1Val">1</string>
-
+    <string name="commonBool1">Bool 1:</string>
+    <string name="commonColor">Kolor</string>
+    <string name="dlColorTitle">Proszę wybierz kolor</string>  <!-- naglowek w oknie dialogowym -->
+    <string name="dlColorBtnOk">Zatwierdz</string> <!-- przycisk OK w oknie dialogowym -->
     <!-- Panel sterowania robotem .............................................................. -->
     <string name="btndesc_przod_lewo">przod lewo</string>
     <string name="btndesc_przod">przod</string>

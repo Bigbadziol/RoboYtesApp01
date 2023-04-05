@@ -29,14 +29,21 @@ class UstawieniaFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var bind: FragmentUstawieniaBinding
-    private var indexTorAudio = 0; //0..1
-    private var indexTrybAudio = 0;//0..4
-    private var lewyGlosnosc = 20; //0..30
-    private var prawyGlosnosc = 20;//
-    private var wyciszenie = 10;
-    private var lewyOdtwarzanie = 0; //0 -losowy, n-numer
+
+    private var indexTorAudio = 0 //0..1
+    private var indexTrybAudio = 0//0..4
+    private var lewyGlosnosc = 20 //0..30
+    private var prawyGlosnosc = 20//0..30
+    private var wyciszenie = 10 //1..15
+    private var lewyOdtwarzanie = 0 //0 -losowy, n-numer //TODO: Sprawdzic czy zgodne z kanalem hardware
+    private var uwzglednijZyroskop = false
+    private var uwzglednijRadar = false
     private var utworyLista1 = ArrayList<String>()
     private var utworyLista2 = ArrayList<String>()
+
+    private var ledyWlaczone = false
+    private var ledyKolor = JsonObject()
+    private var autostop = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -121,7 +128,7 @@ class UstawieniaFragment : Fragment() {
     }
 
     private fun testujParametrLiczba(obiekt : JsonObject, parametr : String, min : Int, max : Int , domyslna : Int) : Int{
-        var tmp = domyslna;
+        var tmp = domyslna
         if (!obiekt.has(parametr)){
             Toast.makeText(activity?.applicationContext,
                 "Brak parametru : $parametr", Toast.LENGTH_SHORT).show()
@@ -139,8 +146,8 @@ class UstawieniaFragment : Fragment() {
                 "Parametr :$parametr poza zakresem.", Toast.LENGTH_SHORT).show()
             return domyslna
         }
-        return tmp;
-    };
+        return tmp
+    }
 
     private fun testujParametrListaUtworow(obiekt : JsonObject, parametr : String): ArrayList<String>{
         val tmp = ArrayList<String>()
@@ -157,6 +164,24 @@ class UstawieniaFragment : Fragment() {
         return tmp
     }
 
+    private fun testujParametrBool(obiekt : JsonObject, parametr : String) : Boolean{
+        if (!obiekt.has(parametr)){
+            Toast.makeText(activity?.applicationContext,
+                "Brak parametru : $parametr", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        var tmpLiczba = 0
+        try {
+            tmpLiczba = obiekt.get(parametr).asInt
+        }catch(e : Exception){
+            Toast.makeText(activity?.applicationContext,
+                "Błąd konwersji parametru :$parametr", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return intToBoolean(tmpLiczba);
+    }
+
     @SuppressLint("SuspiciousIndentation")
     private fun uaktualnijInterfejs(daneWejsciowe: String){
         if (!czytoJson(daneWejsciowe)){
@@ -164,8 +189,8 @@ class UstawieniaFragment : Fragment() {
             return
         }
         val dane: JsonObject = Gson().fromJson(daneWejsciowe, JsonObject::class.java)
-        if (dane.has("audioOdp")){
-            val audio = dane.getAsJsonObject("audioOdp")
+        if (dane.has("audio")){
+            val audio = dane.getAsJsonObject("audio")
             //tor
             indexTorAudio = testujParametrLiczba(audio, PARAM_TOR,0,
                 ArrayList(resources.getStringArray(R.array.arrTorAudio).toMutableList()).size -1,0)
@@ -177,7 +202,7 @@ class UstawieniaFragment : Fragment() {
             //wybor utworu
             utworyLista1.addAll(testujParametrListaUtworow(audio, PARAM_LISTA1))
             utworyLista2.addAll(testujParametrListaUtworow(audio, PARAM_LISTA2))
-            var rozmiar  = 0;
+            var rozmiar  = 0
             when(indexTorAudio){
                 0-> {
                         rozmiar = utworyLista1.size
@@ -190,7 +215,7 @@ class UstawieniaFragment : Fragment() {
                     }
             }
 
-            lewyOdtwarzanie = testujParametrLiczba(audio, PARAM_LEWY_ODTWAZANIE,0,rozmiar-1,0)
+            lewyOdtwarzanie = testujParametrLiczba(audio, PARAM_LEWY_ODTWARZANIE,0,rozmiar-1,0)
             bind.lstUtwory.setIndex(lewyOdtwarzanie)
             //glosnosc lewy
             lewyGlosnosc = testujParametrLiczba(audio, PARAM_LEWY_GLOSNOSC,0, 30,20)
@@ -201,21 +226,64 @@ class UstawieniaFragment : Fragment() {
             //wyciszenie
             wyciszenie = testujParametrLiczba(audio, PARAM_POZIOM_WYCISZENIA,0,15,10)
             bind.suwWyciszenie.set(wyciszenie)
+            //Uwzglednij w audio wskazania zyroskopu
+            uwzglednijZyroskop = testujParametrBool(audio, PARAM_UWZG_ZYROSKOP)
+            bind.swAudioZyroskop.isChecked = uwzglednijZyroskop
+            //Uwzglednij w audio wskazania radaru
+            uwzglednijRadar = testujParametrBool(audio, PARAM_UWZG_RADAR)
+            bind.swAudioRadar.isChecked = uwzglednijRadar
         }else{
             Log.d(TAG,"(Ustawienia) BLAD : brak obiektu 'audioOdp' !")
+        }
+
+        if (dane.has("ledy")){
+         val ledy = dane.getAsJsonObject("ledy")
+            //czy podswietlenie wlaczone
+            ledyWlaczone = testujParametrBool(ledy, PARAM_LEDY_WLACZANE)
+            bind.swPodswietlenie.isChecked = ledyWlaczone
+            //kolor podswietlenia
+            if (ledy.has(PARAM_KOLOR)){
+                ledyKolor = ledy.getAsJsonObject(PARAM_KOLOR)
+                val intKolor = jsonColorToInt(ledyKolor)
+                bind.kolKolor.set(intKolor)
+            }else{
+                Log.d(TAG,"(Ustawienia) BLAD : W obiekcie ledy brak obiektu 'KOLOR'")
+            }
+        }
+
+        if (dane.has("system")){
+            val system = dane.getAsJsonObject("system")
+            //ustawienie autostop
+            autostop = testujParametrBool(system, PARAM_AUTOSTOP)
+            bind.swAutostop.isChecked = autostop
+        }else{
+            Log.d(TAG,"(Ustawienia) BLAD : brak obiektu 'system' !")
         }
     }
 
     private fun noweUstawienia() : JsonObject{
-        val odpowiedz = JsonObject();
-        val odpAudio = JsonObject();
+        val odpowiedz = JsonObject()
+        val odpAudio = JsonObject()
+        val odpLedy = JsonObject()
+        val odpSystem = JsonObject()
+        //parametry dla audio
         odpAudio.addProperty(PARAM_TOR,bind.lstTorAudio.getIdex())
         odpAudio.addProperty(PARAM_TRYB,bind.lstTrybAudio.getIdex())
         odpAudio.addProperty(PARAM_LEWY_GLOSNOSC,bind.suwGlosnoscMuzyka.getValue())
         odpAudio.addProperty(PARAM_PRAWY_GLOSNOSC,bind.suwGlosnoscEfekty.getValue())
         odpAudio.addProperty(PARAM_POZIOM_WYCISZENIA,bind.suwWyciszenie.getValue())
-        odpAudio.addProperty(PARAM_LEWY_ODTWAZANIE,bind.lstUtwory.getIdex())
+        odpAudio.addProperty(PARAM_PRAWY_ODTWARZANIE,bind.lstUtwory.getIdex())
+        odpAudio.addProperty(PARAM_UWZG_RADAR, booleanToInt(bind.swAudioRadar.isChecked))
+        odpAudio.addProperty(PARAM_UWZG_ZYROSKOP, booleanToInt(bind.swAudioZyroskop.isChecked))
         odpowiedz.add("audio",odpAudio)
+        //parametry dla system
+        odpLedy.addProperty(PARAM_LEDY_WLACZANE, booleanToInt(bind.swPodswietlenie.isChecked))
+        odpLedy.add(PARAM_KOLOR, intToJsonColor(bind.kolKolor.getValueInt()))
+        odpowiedz.add("ledy",odpLedy)
+
+        odpSystem.addProperty(PARAM_AUTOSTOP,booleanToInt(bind.swAutostop.isChecked))
+        odpowiedz.add("system",odpSystem)
+        //...
         return odpowiedz
     }
 

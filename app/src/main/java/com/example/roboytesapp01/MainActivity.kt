@@ -21,7 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.roboytesapp01.ElementyInterfejsu.ConnectionState
+import com.example.roboytesapp01.ElementyInterfejsu.StanPolaczenia
 import com.example.roboytesapp01.databinding.ActivityMainBinding
 import com.google.gson.JsonObject
 import java.io.IOException
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                     Log.d(TAG,"(incData) buffer clear")
                     incDataBuffer=""
                     stateHandler.post {
-                        bind.connection.setState(ConnectionState.CONNECTED)
+                        bind.connection.ustawStan(StanPolaczenia.POLACZONO)
                     }
                 }
             }//contain end data signature
@@ -164,7 +164,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
             mmSocket?.let { socket ->
                 Log.d(TAG, "[Connect Thread] - > connecting to socket")
                 stateHandler.post {
-                    bind.connection.setState(ConnectionState.CONNECTING)
+                    bind.connection.ustawStan(StanPolaczenia.LACZE_SIE)
                 }
                 socket.connect()
                 Log.d(TAG, "[Connect Thread] - > socked is connected.")
@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                 }else{
                     Log.d(TAG,"[Connect Thread] welcome -> Socket is not connected!")
                     stateHandler.post {
-                        bind.connection.setState(ConnectionState.CONNECTION_ERROR)
+                        bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
                     }
                 }
             }
@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
         }
 
         if (gotBTPerms(this,false)) {
-            bind.connection.setState(ConnectionState.DISCONNECTED)
+            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO)
             bluetoothRobot?.let {
                 Log.d(TAG,"Ustawiam, naszego robota do polaczenia.")
                 bind.connection.setDevice(it)
@@ -272,24 +272,23 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                 //Teraz  domyslnie uruchamia
                 //replaceFragment(SterowanieFragment(), "") // Fragment sterowania
                 if (bind.connection.selectedDevice != null){
-                    when (bind.connection.getState()){
-                        ConnectionState.DISCONNECTED ->{
+                    when (bind.connection.wezStan()){
+                        StanPolaczenia.ROZLACZONO ->{
                             ConnectThread(bind.connection.selectedDevice!!).start()
                         }
-                        ConnectionState.CONNECTION_ERROR ->{
+                        StanPolaczenia.BLAD_POLACZENIA ->{
                             ConnectThread(bind.connection.selectedDevice!!).start()
                         }
-                        ConnectionState.CONNECTED->{
+                        StanPolaczenia.POLACZONO->{
                             ConnectedThread(deviceSocket).cancel()
-                            bind.connection.setState(ConnectionState.DISCONNECTED)
+                            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO)
                             replaceFragment(WitajFragment(),"") //Set welcome screen
                             //przeladuj witaj ???
                         }
-                        ConnectionState.CONNECTING->{
-                            //Do nothing , wait on connection or error
-                            //at this point "btn" and "sp" are disabled
+                        StanPolaczenia.LACZE_SIE->{
+                            //pojecia nie mam
                         }
-                        ConnectionState.EDIT->{
+                        StanPolaczenia.EDYCJA->{
                             //...pojecia nie mam
                         }
                     }
@@ -302,10 +301,14 @@ class MainActivity : AppCompatActivity(),ICommunicator {
             bind.connection.btnUstawienia.setOnClickListener {
                 Log.d(TAG, "btn Ustawienia - klik")
                 replaceFragment(UstawieniaFragment(), "") // Fragment ustawienia
-                bind.connection.setState(ConnectionState.CONNECTION_ERROR)
+                bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
             }
-/*
+
             bind.btnTest1.setOnClickListener {
+                Log.d(TAG,"Test1 - click!")
+                replaceFragment(UstawieniaFragment(),"");
+                /*
+                //Spamowanie na pałe pakietem
                 if (deviceSocket.isConnected){
                     // Uwaga ! znak \n - jest znakiem informujacym kontroler o koncu komunikatu
                     val msg="<{\"audio\":{\"PN\":3}}\n"
@@ -315,9 +318,10 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                 }else{
                     Log.d(TAG,"(MainActivity)(ch:sterowanie)-> Socket nie polaczony!")
                 }
+               */
             }
 
- */
+
         }
 
     }
@@ -341,12 +345,17 @@ class MainActivity : AppCompatActivity(),ICommunicator {
      */
     override fun kanalSterowanie(msg: String) {
         Log.d(TAG,"(MainActivity) wiadomosc od(sterowanie): $msg")
+        if (!::deviceSocket.isInitialized) {
+            Log.d(TAG,"Zmienna deviceSoket nie została zainicjalizowana.")
+            return
+        }
         if (deviceSocket.isConnected){
             //Uwaga! znak '\n' informuje kontroler o koncu komunikatu, niezbedny
             val msgEnd = msg + '\n'
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())
         }else{
             Log.d(TAG,"(MainActivity)(ch:sterowanie)-> Socket nie polaczony!")
+            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO);
         }
     }
 
@@ -355,12 +364,18 @@ class MainActivity : AppCompatActivity(),ICommunicator {
      */
     override fun kanalUstawienia(msg: String) {
         Log.d(TAG,"(MainActivity) wiadomosc od(ustawienia): $msg")
+        if (!::deviceSocket.isInitialized) {
+            Log.d(TAG,"Zmienna deviceSoket nie została zainicjalizowana.")
+            return
+        }
         if (deviceSocket.isConnected){
             //Uwaga! znak '\n' informuje kontroler o koncu komunikatu, niezbedny
             val msgEnd = msg + '\n'
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())
+            bind.connection.ustawStan(StanPolaczenia.POLACZONO);
         }else{
             Log.d(TAG,"(MainActivity)(ch:ustawienia)-> Socket nie polaczony!")
+            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO);
         }
     }
 

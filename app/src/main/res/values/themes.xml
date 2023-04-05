@@ -62,6 +62,37 @@ https://www11.flamingtext.com/net-fu/dynamic.cgi?script=arrow-in-button&radius=6
         <item name="android:minHeight">48dp</item>
     </style>
 
+    <!-- przycisk do wyboru koloru podswietlenia robota -->
+    <style name="panelData_button_color">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- pole z przykladowym kolorem -->
+    <style name="panelData_textview_color">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">2</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginHorizontal">10sp</item>
+        <item name="android:background">@color/domysle_podswietlenie</item>
+        <item name="android:enabled">false</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:text"></item>
+    </style>
+
+    <!-- Przycisk typu on/off  : przykładowo : Audio zyroskop, Audio radar, itp-->
+    <!-- Nie uzywać!! stylowanie wywala !, Pomysł z dziedzieczeniem tez nie pomaga. -->
+    <style name="panelData_switch" parent="@style/Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:layout_width">200dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <!-- Strzalki do poruszania robotem-->
     <!--         <item name="android:scaleType">fitCenter</item> -->
     <style name="btnKierunek">

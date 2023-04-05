@@ -27,11 +27,29 @@ class StrzalkiMonitor(
         //jeśli nie jest , zwraca stringa "0"
         //Parametry zdefiniowane w Stale.
         monitorLewoPrzod = ImageButtonMonitor(ibLewoGora,buttonCheckTime, PARAM_LEWO_PRZOD)
+        monitorLewoPrzod.ustawWcisniety(R.drawable.gora_lewo_on)
+        monitorLewoPrzod.ustawNieWcisniety(R.drawable.gora_lewo_off)
+
         monitorPrzod = ImageButtonMonitor(ibGora,buttonCheckTime, PARAM_PRZOD)
+        monitorPrzod.ustawWcisniety(R.drawable.gora_on)
+        monitorPrzod.ustawNieWcisniety(R.drawable.gora_off)
+
         monitorPrawoPrzod = ImageButtonMonitor(ibPrawoGora,buttonCheckTime, PARAM_PRAWO_PRZOD)
+        monitorPrawoPrzod.ustawWcisniety(R.drawable.prawo_gora_on)
+        monitorPrawoPrzod.ustawNieWcisniety(R.drawable.prawo_gora_off)
+
         monitorLewoTyl = ImageButtonMonitor(ibLewoDol,buttonCheckTime, PARAM_LEWO_TYL)
+        monitorLewoTyl.ustawWcisniety(R.drawable.lewo_dol_on)
+        monitorLewoTyl.ustawNieWcisniety(R.drawable.lewo_dol_off)
+
         monitorTyl = ImageButtonMonitor(ibDol,buttonCheckTime, PARAM_TYL)
+        monitorTyl.ustawWcisniety(R.drawable.dol_on)
+        monitorTyl.ustawNieWcisniety(R.drawable.dol_off)
+
         monitorPrawoTyl = ImageButtonMonitor(ibPrawoDol,buttonCheckTime, PARAM_PRAWO_TYL)
+        monitorPrawoTyl.ustawWcisniety(R.drawable.prawo_dol_on)
+        monitorPrawoTyl.ustawNieWcisniety(R.drawable.prawo_dol_off)
+
         monitorLewoPrzod.start()
         monitorPrzod.start()
         monitorPrawoPrzod.start()
@@ -56,7 +74,7 @@ class StrzalkiMonitor(
          for (tenStan : String in stanyPrzyciskowSterowania){
             if (!tenStan.contentEquals("0"))
                 //Uwaga , znak informujacy o koncu komunikatu '\n' doklejany jest przed samym wyslaniem
-                return "{\"ruch\":{\""+tenStan+"\":1}}"
+                return "{\"ruch\":{\"$tenStan\":1}}"
                 //return tenStan // testy  : inne znaki dla apki bluetooth rc controller
         }
         return ""

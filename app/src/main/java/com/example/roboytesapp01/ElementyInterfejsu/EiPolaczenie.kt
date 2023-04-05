@@ -5,7 +5,6 @@ import android.bluetooth.BluetoothDevice
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
-import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.roboytesapp01.R
@@ -13,27 +12,24 @@ import com.example.roboytesapp01.TAG
 import com.google.android.material.button.MaterialButton
 
 
-
-enum class ConnectionState{
-    DISCONNECTED,
-    CONNECTING,
-    CONNECTED,
-    CONNECTION_ERROR,
-    EDIT
+enum class StanPolaczenia{
+    ROZLACZONO,
+    LACZE_SIE,
+    POLACZONO,
+    BLAD_POLACZENIA,
+    EDYCJA
 }
 
 class EiPolaczenie  (
     context: Context,
     attrs: AttributeSet
-    //newDevice: BluetoothDevice
 ) : LinearLayout(context, attrs) {
 
-    private var state: ConnectionState = ConnectionState.DISCONNECTED
+    private var state: StanPolaczenia = StanPolaczenia.ROZLACZONO
 
     var btnPolaczenie: MaterialButton
-    var tvStatus: TextView
+    private var tvStatus: TextView
     var btnUstawienia : MaterialButton
-
     var selectedDevice: BluetoothDevice? = null
 
     init {
@@ -48,12 +44,9 @@ class EiPolaczenie  (
         btnUstawienia = findViewById<MaterialButton>(R.id.btnUstawieniaRobot)
 
         try {
-
         } finally {
             customAttributesStyle.recycle()
         }
-
-        //selectedDevice = newDevice
     }
 
     fun getValue(): Int {
@@ -63,70 +56,62 @@ class EiPolaczenie  (
     //bylo setDevicesList
     @SuppressLint("MissingPermission")
     fun setDevice(newDevice : BluetoothDevice){
-        selectedDevice = newDevice;
+        selectedDevice = newDevice
         Log.d(TAG,"(EiPoloczenie) ustawione urzadzenie :  ${selectedDevice!!.address}  , name : ${selectedDevice!!.name}")
     }
 
-    fun interfaceConnected() {
+    private fun interfejsPolaczono() {
         btnPolaczenie.isEnabled = true
         btnPolaczenie.text = resources.getString(R.string.btnPolaczRobot_rozlacz)
         tvStatus.text = resources.getString(R.string.stateConnected)
         btnUstawienia.isEnabled = true
+        Log.d(TAG,"(Polaczenie) - polaczony")
     }
 
-    fun interfaceConnecting() {
+    private fun interfejsLaczeSie() {
         btnPolaczenie.isEnabled = false
         btnPolaczenie.text = resources.getString(R.string.btnPolaczRobot_polacz)
         tvStatus.text = resources.getString(R.string.stateConnecting)
         btnUstawienia.isEnabled = false
+        Log.d(TAG,"(Polaczenie) - lacze sie")
     }
 
-    fun interfaceDisconnected() {
+    private fun interfejsRozlaczono() {
         btnPolaczenie.isEnabled = true
         btnPolaczenie.text = resources.getString(R.string.btnPolaczRobot_polacz)
         tvStatus.text = resources.getString((R.string.stateDisconnected))
         btnUstawienia.isEnabled = false
+        Log.d(TAG,"(Polaczenie) - rozlaczono")
     }
 
-    fun interfaceConnectionError() {
+    private fun interfejsBladPolaczenia() {
         btnPolaczenie.isEnabled = true
         btnPolaczenie.text = resources.getString(R.string.btnPolaczRobot_polacz)
         tvStatus.text = resources.getString(R.string.stateConnectionError)
         btnUstawienia.isEnabled = false
+        Log.d(TAG,"(Polaczenie) - blad polaczenia")
     }
 
-    fun interfaceEdycja(){
+    private fun interfejsEdycja(){
         btnPolaczenie.isEnabled = true
         btnPolaczenie.text = resources.getString(R.string.btnPolaczRobot_rozlacz)
         tvStatus.text = resources.getString(R.string.stateEdition)
         btnUstawienia.isEnabled = false
+        Log.d(TAG,"(Polaczenie) - tryb edycji")
     }
 
-    fun setState(newState: ConnectionState) {
+    fun ustawStan(newState: StanPolaczenia) {
         state = newState
         when (state) {
-            ConnectionState.CONNECTED -> interfaceConnected()
-            ConnectionState.CONNECTING -> interfaceConnecting()
-            ConnectionState.DISCONNECTED -> interfaceDisconnected()
-            ConnectionState.CONNECTION_ERROR -> interfaceConnectionError()
-            ConnectionState.EDIT -> interfaceEdycja()
+            StanPolaczenia.POLACZONO -> interfejsPolaczono()
+            StanPolaczenia.LACZE_SIE -> interfejsLaczeSie()
+            StanPolaczenia.ROZLACZONO -> interfejsRozlaczono()
+            StanPolaczenia.BLAD_POLACZENIA -> interfejsBladPolaczenia()
+            StanPolaczenia.EDYCJA -> interfejsEdycja()
         }
     }
 
-    fun getState(): ConnectionState {
+    fun wezStan(): StanPolaczenia {
         return state
-    }
-
-
-    fun hide() {
-        btnPolaczenie.visibility = View.GONE
-        tvStatus.visibility = View.GONE
-        btnUstawienia.visibility = View.GONE
-    }
-
-    fun show() {
-        btnPolaczenie.visibility = View.VISIBLE
-        tvStatus.visibility = View.VISIBLE
-        btnUstawienia.visibility = View.VISIBLE
     }
 }

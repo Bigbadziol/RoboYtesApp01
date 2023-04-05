@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.roboytesapp01.databinding.FragmentSterowanieBinding
+import com.example.roboytesapp01.ui.main.PARAM_LEWY_ODTWARZANIE
 import com.example.roboytesapp01.ui.main.PARAM_PRAWY_ODTWARZANIE
 import java.lang.Thread.sleep
 
@@ -103,7 +104,7 @@ class SterowanieFragment : Fragment() {
     private fun audioEfektToJson(numerEfektu: Int):String{
         // Uwaga! znak '\n' informujacy kontroler o koncu komunikatu doklejany
         // przed samym wyslaniem
-        return "{\"audio\":{\""+ PARAM_PRAWY_ODTWARZANIE + "\":"+numerEfektu+ "}}"
+        return "{\"audio\":{\""+ PARAM_LEWY_ODTWARZANIE + "\":"+numerEfektu+ "}}"
     }
 
     companion object {

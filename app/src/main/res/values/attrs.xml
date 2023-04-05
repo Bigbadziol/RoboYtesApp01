@@ -21,4 +21,9 @@
         <attr name="param_bool_value" format="boolean"/>
     </declare-styleable>
 
+    <declare-styleable name="EiKolor">
+        <attr name="param_color_description" format="string"/>
+        <attr name="param_color_value" format="color"/>
+    </declare-styleable>
+
 </resources>
