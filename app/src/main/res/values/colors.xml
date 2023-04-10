@@ -8,9 +8,15 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="szary1">#D6D7D7</color>
+    <color name="pomaranczowy1">#FF3D00</color>
+    <color name="pomaranczowy_jasny">#EABD7B</color>
+
+
+
     <!-- lista elementow -->
-    <color name="lista_text_background_color">#F1BA69</color>
-    <color name="lista_text_color">#F44336</color>
+    <color name="lista_text_background_color">#FF3D00</color>
+    <color name="lista_text_color">#FFFFFFFF</color>
 
     <!--suwak-->
     <color name="suwak_kulka_color">#F44336</color>

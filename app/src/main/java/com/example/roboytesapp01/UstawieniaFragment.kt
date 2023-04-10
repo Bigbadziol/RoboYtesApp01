@@ -35,7 +35,7 @@ class UstawieniaFragment : Fragment() {
     private var lewyGlosnosc = 20 //0..30
     private var prawyGlosnosc = 20//0..30
     private var wyciszenie = 10 //1..15
-    private var lewyOdtwarzanie = 0 //0 -losowy, n-numer //TODO: Sprawdzic czy zgodne z kanalem hardware
+    private var prawyOdtwarzanie = 0 //0 -losowy utwor muzyczny, n-numer utworu
     private var uwzglednijZyroskop = false
     private var uwzglednijRadar = false
     private var utworyLista1 = ArrayList<String>()
@@ -105,7 +105,7 @@ class UstawieniaFragment : Fragment() {
                         podmienianaLista.addAll(utworyLista1)
                         bind.lstUtwory.set(resources.getString(R.string.utwor_desc),podmienianaLista)
                         if (!torAudioBug){
-                            bind.lstUtwory.setIndex(lewyOdtwarzanie)
+                            bind.lstUtwory.setIndex(prawyOdtwarzanie)
                             torAudioBug = true
                         }
                     }
@@ -114,7 +114,7 @@ class UstawieniaFragment : Fragment() {
                         podmienianaLista.addAll(utworyLista2)
                         bind.lstUtwory.set(resources.getString(R.string.utwor_desc),podmienianaLista)
                         if (!torAudioBug){
-                            bind.lstUtwory.setIndex(lewyOdtwarzanie)
+                            bind.lstUtwory.setIndex(prawyOdtwarzanie)
                             torAudioBug = true
                         }
                     }
@@ -189,8 +189,8 @@ class UstawieniaFragment : Fragment() {
             return
         }
         val dane: JsonObject = Gson().fromJson(daneWejsciowe, JsonObject::class.java)
-        if (dane.has("audio")){
-            val audio = dane.getAsJsonObject("audio")
+        if (dane.has(OBIEKT_AUDIO)){
+            val audio = dane.getAsJsonObject(OBIEKT_AUDIO)
             //tor
             indexTorAudio = testujParametrLiczba(audio, PARAM_TOR,0,
                 ArrayList(resources.getStringArray(R.array.arrTorAudio).toMutableList()).size -1,0)
@@ -199,7 +199,7 @@ class UstawieniaFragment : Fragment() {
             indexTrybAudio = testujParametrLiczba(audio,PARAM_TRYB,0,
                 ArrayList(resources.getStringArray(R.array.arrTrybAudio).toMutableList()).size -1,0)
             bind.lstTrybAudio.setIndex(indexTrybAudio)
-            //wybor utworu
+            //wybor utworu (listy)
             utworyLista1.addAll(testujParametrListaUtworow(audio, PARAM_LISTA1))
             utworyLista2.addAll(testujParametrListaUtworow(audio, PARAM_LISTA2))
             var rozmiar  = 0
@@ -214,9 +214,9 @@ class UstawieniaFragment : Fragment() {
                     bind.lstUtwory.set(resources.getString(R.string.utwor_desc),utworyLista2)
                     }
             }
-
-            lewyOdtwarzanie = testujParametrLiczba(audio, PARAM_LEWY_ODTWARZANIE,0,rozmiar-1,0)
-            bind.lstUtwory.setIndex(lewyOdtwarzanie)
+            //wybór utworu (index na liście)
+            prawyOdtwarzanie = testujParametrLiczba(audio, PARAM_PRAWY_ODTWARZANIE,0,rozmiar-1,0)
+            bind.lstUtwory.setIndex(prawyOdtwarzanie)
             //glosnosc lewy
             lewyGlosnosc = testujParametrLiczba(audio, PARAM_LEWY_GLOSNOSC,0, 30,20)
             bind.suwGlosnoscMuzyka.set(lewyGlosnosc)
@@ -224,7 +224,7 @@ class UstawieniaFragment : Fragment() {
             prawyGlosnosc = testujParametrLiczba(audio, PARAM_PRAWY_GLOSNOSC,0, 30,20)
             bind.suwGlosnoscEfekty.set(prawyGlosnosc)
             //wyciszenie
-            wyciszenie = testujParametrLiczba(audio, PARAM_POZIOM_WYCISZENIA,0,15,10)
+            wyciszenie = testujParametrLiczba(audio, PARAM_POZIOM_WYCISZENIA,1,15,10)
             bind.suwWyciszenie.set(wyciszenie)
             //Uwzglednij w audio wskazania zyroskopu
             uwzglednijZyroskop = testujParametrBool(audio, PARAM_UWZG_ZYROSKOP)
@@ -236,8 +236,8 @@ class UstawieniaFragment : Fragment() {
             Log.d(TAG,"(Ustawienia) BLAD : brak obiektu 'audioOdp' !")
         }
 
-        if (dane.has("ledy")){
-         val ledy = dane.getAsJsonObject("ledy")
+        if (dane.has(OBIEKT_LEDY)){
+         val ledy = dane.getAsJsonObject(OBIEKT_LEDY)
             //czy podswietlenie wlaczone
             ledyWlaczone = testujParametrBool(ledy, PARAM_LEDY_WLACZANE)
             bind.swPodswietlenie.isChecked = ledyWlaczone
@@ -251,10 +251,10 @@ class UstawieniaFragment : Fragment() {
             }
         }
 
-        if (dane.has("system")){
-            val system = dane.getAsJsonObject("system")
+        if (dane.has(OBIEKT_NAPED)){
+            val naped = dane.getAsJsonObject(OBIEKT_NAPED)
             //ustawienie autostop
-            autostop = testujParametrBool(system, PARAM_AUTOSTOP)
+            autostop = testujParametrBool(naped, PARAM_AUTOSTOP)
             bind.swAutostop.isChecked = autostop
         }else{
             Log.d(TAG,"(Ustawienia) BLAD : brak obiektu 'system' !")
@@ -265,8 +265,8 @@ class UstawieniaFragment : Fragment() {
         val odpowiedz = JsonObject()
         val odpAudio = JsonObject()
         val odpLedy = JsonObject()
-        val odpSystem = JsonObject()
-        //parametry dla audio
+        val odpNaped = JsonObject()
+        //parametry dla obiektu audio
         odpAudio.addProperty(PARAM_TOR,bind.lstTorAudio.getIdex())
         odpAudio.addProperty(PARAM_TRYB,bind.lstTrybAudio.getIdex())
         odpAudio.addProperty(PARAM_LEWY_GLOSNOSC,bind.suwGlosnoscMuzyka.getValue())
@@ -275,22 +275,24 @@ class UstawieniaFragment : Fragment() {
         odpAudio.addProperty(PARAM_PRAWY_ODTWARZANIE,bind.lstUtwory.getIdex())
         odpAudio.addProperty(PARAM_UWZG_RADAR, booleanToInt(bind.swAudioRadar.isChecked))
         odpAudio.addProperty(PARAM_UWZG_ZYROSKOP, booleanToInt(bind.swAudioZyroskop.isChecked))
-        odpowiedz.add("audio",odpAudio)
-        //parametry dla system
+        odpowiedz.add(OBIEKT_AUDIO,odpAudio)
+        //parametry dla obiektu ledy
         odpLedy.addProperty(PARAM_LEDY_WLACZANE, booleanToInt(bind.swPodswietlenie.isChecked))
         odpLedy.add(PARAM_KOLOR, intToJsonColor(bind.kolKolor.getValueInt()))
-        odpowiedz.add("ledy",odpLedy)
+        odpowiedz.add(OBIEKT_LEDY,odpLedy)
+        //parametry dla obiektu naped
+        odpNaped.addProperty(PARAM_AUTOSTOP,booleanToInt(bind.swAutostop.isChecked))
+        odpowiedz.add(OBIEKT_NAPED,odpNaped)
 
-        odpSystem.addProperty(PARAM_AUTOSTOP,booleanToInt(bind.swAutostop.isChecked))
-        odpowiedz.add("system",odpSystem)
-        //...
         return odpowiedz
     }
 
     private fun przejdzDoSterowania(){
         val fragment : Fragment = SterowanieFragment()
         val fragmentTransaction = parentFragmentManager.beginTransaction()
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, 0, 0, R.anim.exit_to_right)
+        //fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, 0, 0, R.anim.exit_to_right)
+
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, 0, 0, R.anim.exit_to_bottom)
         fragmentTransaction.add(R.id.mainFragmentContainer,fragment)
         fragmentTransaction.addToBackStack(null) //TODO: Aby napewno ?
         fragmentTransaction.commit()

@@ -62,7 +62,7 @@
         <item>@string/trybAudio_pauzowanie</item>
     </string-array>
 
-
+    <!-- Dane testowe .......................................................................... -->
     <string name="utwor_desc"> Utwór:</string>
     <string name="utwor_losowy">losowy utwor</string>
     <string name="utwor_test1">utwor 1</string>
@@ -90,6 +90,10 @@
     <string name="lista_test_2">lista test 2</string>
     <string name="lista_test_3">lista test 3</string>
     <string name="lista_test_4">lista test 4</string>
+    <string name="lbAudio_zyroskop">Audio zyroskop:</string>
+    <string name="lbAudio_radar">Audio radar :</string>
+    <string name="lbAuto_stop">Auto stop :</string>
+    <string name="lbPodswietlanie">Wlacz podswietlenie</string>
 
     <string-array name="arrListaTest">
         <item>@string/lista_test_1</item>

@@ -74,7 +74,7 @@ class StrzalkiMonitor(
          for (tenStan : String in stanyPrzyciskowSterowania){
             if (!tenStan.contentEquals("0"))
                 //Uwaga , znak informujacy o koncu komunikatu '\n' doklejany jest przed samym wyslaniem
-                return "{\"ruch\":{\"$tenStan\":1}}"
+                return "{\""+OBIEKT_NAPED+"\":{\"$tenStan\":1}}"
                 //return tenStan // testy  : inne znaki dla apki bluetooth rc controller
         }
         return ""

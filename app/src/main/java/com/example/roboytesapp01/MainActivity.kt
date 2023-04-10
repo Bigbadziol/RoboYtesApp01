@@ -1,7 +1,7 @@
 package com.example.roboytesapp01
 /*
     Modyfikacja seekbara -> https://www.geeksforgeeks.org/creating-custom-seekbar-in-android/
-
+TODO: OBSLUZYC socket.connect  , kiedy robot  wylaczony
  */
 import android.Manifest
 import android.annotation.SuppressLint
@@ -166,25 +166,35 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                 stateHandler.post {
                     bind.connection.ustawStan(StanPolaczenia.LACZE_SIE)
                 }
-                socket.connect()
-                Log.d(TAG, "[Connect Thread] - > socked is connected.")
-                deviceSocket = mmSocket as BluetoothSocket
-                stateHandler.post {
-                    //tu raczej nic, lepiej po pobraniu danych
-                }
-                ConnectedThread(socket).start()
 
-                val cmdWelcome= JsonObject()
-                cmdWelcome.addProperty("cmd","DANE_PROSZE")
-                if (deviceSocket.isConnected){
-                    //Uwaga znak '\n' jest niezbedny , poniewaz informuje kontroler o koncu komunikatu
-                    val cmd = cmdWelcome.toString()+'\n'
-                    Log.d(TAG,"[Connect Thread] welcome -> $cmd")
-                    ConnectedThread(deviceSocket).write(cmd.toByteArray())
-                }else{
-                    Log.d(TAG,"[Connect Thread] welcome -> Socket is not connected!")
+                try {
+                    socket.connect()
+                }catch (exception: IOException){
+                    Log.d(TAG,"(connect thread)(run) - soket nie polaczony")
                     stateHandler.post {
                         bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
+                    }
+                }
+                if (socket.isConnected) {
+                    Log.d(TAG, "[Connect Thread] - > socked is connected.")
+                    deviceSocket = mmSocket as BluetoothSocket
+                    stateHandler.post {
+                        //tu raczej nic, lepiej po pobraniu danych
+                    }
+                    ConnectedThread(socket).start()
+
+                    val cmdWelcome = JsonObject()
+                    cmdWelcome.addProperty("cmd", "DANE_PROSZE")
+                    if (deviceSocket.isConnected) {
+                        //Uwaga znak '\n' jest niezbedny , poniewaz informuje kontroler o koncu komunikatu
+                        val cmd = cmdWelcome.toString() + '\n'
+                        Log.d(TAG, "[Connect Thread] welcome -> $cmd")
+                        ConnectedThread(deviceSocket).write(cmd.toByteArray())
+                    } else {
+                        Log.d(TAG, "[Connect Thread] welcome -> Socket is not connected!")
+                        stateHandler.post {
+                            bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
+                        }
                     }
                 }
             }
@@ -280,10 +290,28 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                             ConnectThread(bind.connection.selectedDevice!!).start()
                         }
                         StanPolaczenia.POLACZONO->{
-                            ConnectedThread(deviceSocket).cancel()
-                            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO)
                             replaceFragment(WitajFragment(),"") //Set welcome screen
                             //przeladuj witaj ???
+                            val cmdPapa = JsonObject()
+                            cmdPapa.addProperty("cmd", "PAPA")
+                            val cmd = cmdPapa.toString() + '\n'
+
+                            if (deviceSocket.isConnected) {
+                                //Uwaga znak '\n' jest niezbedny , poniewaz informuje kontroler o koncu komunikatu
+                                Log.d(TAG, "[Rozlaczanie] -> $cmd")
+                                ConnectedThread(deviceSocket).write(cmd.toByteArray())
+                                stateHandler.post {
+                                    bind.connection.ustawStan(StanPolaczenia.ROZLACZONO)
+                                }
+                                ConnectedThread(deviceSocket).cancel()
+                            } else {
+                                Log.d(TAG, "[Rozlaczanie] -> Socket nie jest polaczony");
+                                stateHandler.post {
+                                    bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
+                                }
+                                ConnectedThread(deviceSocket).cancel()
+                            }
+
                         }
                         StanPolaczenia.LACZE_SIE->{
                             //pojecia nie mam
@@ -303,7 +331,8 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                 replaceFragment(UstawieniaFragment(), "") // Fragment ustawienia
                 bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
             }
-
+/*
+            // PRZYCISK TESTOWY
             bind.btnTest1.setOnClickListener {
                 Log.d(TAG,"Test1 - click!")
                 replaceFragment(UstawieniaFragment(),"");
@@ -320,7 +349,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                 }
                */
             }
-
+*/
 
         }
 
@@ -336,6 +365,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
 
         fragment.arguments = bundle
         val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, 0, 0, R.anim.exit_to_bottom)
         fragmentTransaction.replace(R.id.mainFragmentContainer,fragment)
         fragmentTransaction.commit()
     }
