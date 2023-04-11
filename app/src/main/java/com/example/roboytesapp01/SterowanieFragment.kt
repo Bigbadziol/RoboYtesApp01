@@ -7,8 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.roboytesapp01.databinding.FragmentSterowanieBinding
-import com.example.roboytesapp01.ui.main.PARAM_LEWY_ODTWARZANIE
-import com.example.roboytesapp01.ui.main.PARAM_PRAWY_ODTWARZANIE
+import com.example.roboytesapp01.ui.main.*
 import java.lang.Thread.sleep
 
 
@@ -70,28 +69,32 @@ class SterowanieFragment : Fragment() {
         nasluchujPrzyciskow.start() //Nasłuchuj przyciskow sterujacych
 
         bind.btnFun1.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(1))
+            communicator.kanalSterowanie(audioEfektToJson(22))
         }
         bind.btnFun2.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(2))
+            communicator.kanalSterowanie(audioEfektToJson(23))
         }
         bind.btnFun3.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(3))
+            communicator.kanalSterowanie(audioEfektToJson(24))
         }
         bind.btnFun4.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(4))
+            communicator.kanalSterowanie(audioEfektToJson(25))
         }
         bind.btnFun5.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(5))
+            communicator.kanalSterowanie(audioEfektToJson(26))
         }
         bind.btnFun6.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(6))
+            communicator.kanalSterowanie(audioEfektToJson(27))
         }
         bind.btnFun7.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(7))
+            communicator.kanalSterowanie(audioEfektToJson(28))
         }
         bind.btnFun8.setOnClickListener {
-            communicator.kanalSterowanie(audioEfektToJson(8))
+            var przykladowyRuch ="{\""+ OBIEKT_RADAR+"\":{\""+ PARAM_RUCH180+"\":{"
+            przykladowyRuch+="\""+ PARAM_RUCH180_STARTKAT+"\":90,"
+            przykladowyRuch+="\""+ PARAM_RUCH180_WYKONAJ+"\":1"
+            przykladowyRuch+="}}}"
+            communicator.kanalSterowanie(przykladowyRuch)
         }
     }
 
@@ -104,7 +107,7 @@ class SterowanieFragment : Fragment() {
     private fun audioEfektToJson(numerEfektu: Int):String{
         // Uwaga! znak '\n' informujacy kontroler o koncu komunikatu doklejany
         // przed samym wyslaniem
-        return "{\"audio\":{\""+ PARAM_LEWY_ODTWARZANIE + "\":"+numerEfektu+ "}}"
+        return "{\""+ OBIEKT_AUDIO+"\":{\""+ PARAM_LEWY_ODTWARZANIE + "\":"+numerEfektu+ "}}"
     }
 
     companion object {

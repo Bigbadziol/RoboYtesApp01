@@ -3,18 +3,17 @@ package com.example.roboytesapp01
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
-import com.example.roboytesapp01.DaneTestowe.daneTestoweOdpowiedz
+import androidx.fragment.app.Fragment
 import com.example.roboytesapp01.databinding.FragmentUstawieniaBinding
 import com.example.roboytesapp01.ui.main.*
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import kotlin.collections.ArrayList
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM_USTAWIENIA1 = "param_ustawienia1"
@@ -28,6 +27,7 @@ private const val ARG_PARAM_USTAWIENIA2 = "param_ustawienia2"
 class UstawieniaFragment : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+    private var ustawieniaRobota="{}"
     private lateinit var bind: FragmentUstawieniaBinding
 
     private var indexTorAudio = 0 //0..1
@@ -45,18 +45,23 @@ class UstawieniaFragment : Fragment() {
     private var ledyKolor = JsonObject()
     private var autostop = false
 
+    private var kat = 0
+    private var ruch180start = 0
+    private var ruch180wykonaj = 0 //klasyka bool to int
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM_USTAWIENIA1)
             param2 = it.getString(ARG_PARAM_USTAWIENIA2)
+            ustawieniaRobota = it.getString(ARG_DATA).toString()
         }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         bind =  FragmentUstawieniaBinding.inflate(inflater,container,false)
         val view = bind.root
@@ -78,8 +83,8 @@ class UstawieniaFragment : Fragment() {
         //wladowane dane testowe ,potem będą nadpisane
         bind.lstUtwory.set(resources.getString(R.string.utwor_desc),
             ArrayList(resources.getStringArray(R.array.arrUtworyTest).toMutableList()))
-        uaktualnijInterfejs(daneTestoweOdpowiedz)
-
+        //uaktualnijInterfejs(daneTestoweOdpowiedz)
+        uaktualnijInterfejs(ustawieniaRobota)
         bind.btnUstawieniaPotwierdz.setOnClickListener {
             communicator.kanalUstawienia(noweUstawienia().toString())
             //W przypadku potrzeby fragment-> fragment pamiętać o Bundle
@@ -88,6 +93,7 @@ class UstawieniaFragment : Fragment() {
         }
 
         bind.btnUstawieniaZamknij.setOnClickListener {
+            communicator.kanalUstawienia("{}")
             przejdzDoSterowania()
         }
 
@@ -128,7 +134,7 @@ class UstawieniaFragment : Fragment() {
     }
 
     private fun testujParametrLiczba(obiekt : JsonObject, parametr : String, min : Int, max : Int , domyslna : Int) : Int{
-        var tmp = domyslna
+        val tmp: Int
         if (!obiekt.has(parametr)){
             Toast.makeText(activity?.applicationContext,
                 "Brak parametru : $parametr", Toast.LENGTH_SHORT).show()
@@ -171,7 +177,7 @@ class UstawieniaFragment : Fragment() {
             return false
         }
 
-        var tmpLiczba = 0
+        val tmpLiczba : Int
         try {
             tmpLiczba = obiekt.get(parametr).asInt
         }catch(e : Exception){
@@ -179,7 +185,7 @@ class UstawieniaFragment : Fragment() {
                 "Błąd konwersji parametru :$parametr", Toast.LENGTH_SHORT).show()
             return false
         }
-        return intToBoolean(tmpLiczba);
+        return intToBoolean(tmpLiczba)
     }
 
     @SuppressLint("SuspiciousIndentation")
@@ -200,6 +206,8 @@ class UstawieniaFragment : Fragment() {
                 ArrayList(resources.getStringArray(R.array.arrTrybAudio).toMutableList()).size -1,0)
             bind.lstTrybAudio.setIndex(indexTrybAudio)
             //wybor utworu (listy)
+
+
             utworyLista1.addAll(testujParametrListaUtworow(audio, PARAM_LISTA1))
             utworyLista2.addAll(testujParametrListaUtworow(audio, PARAM_LISTA2))
             var rozmiar  = 0
@@ -259,13 +267,32 @@ class UstawieniaFragment : Fragment() {
         }else{
             Log.d(TAG,"(Ustawienia) BLAD : brak obiektu 'system' !")
         }
+
+        //Narazie nie obslugiwane ale niech będzie
+        if (dane.has(OBIEKT_AUDIO)){
+            val radar = dane.getAsJsonObject(OBIEKT_RADAR)
+            if (radar.has(PARAM_KAT)){
+                kat = testujParametrLiczba(radar, PARAM_KAT,0,180,90)
+                Log.d(TAG,"Kat: $kat")
+            }
+            if (radar.has(PARAM_RUCH180)){
+                val ruch180 = radar.getAsJsonObject(PARAM_RUCH180)
+                ruch180start = testujParametrLiczba(ruch180, PARAM_RUCH180_STARTKAT,0,180,90)
+                ruch180wykonaj = testujParametrLiczba(ruch180, PARAM_RUCH180_WYKONAJ,0,1,0)
+                Log.d(TAG,"Ruch 180 -> start : $ruch180start , wykonaj : $ruch180wykonaj")
+            }
+        }
     }
 
     private fun noweUstawienia() : JsonObject{
         val odpowiedz = JsonObject()
         val odpAudio = JsonObject()
+        val odpAudioL1 = JsonArray()
+        val odpAudioL2 = JsonArray()
         val odpLedy = JsonObject()
         val odpNaped = JsonObject()
+        val odpRadar = JsonObject()
+        val odpRadarRuch180 = JsonObject()
         //parametry dla obiektu audio
         odpAudio.addProperty(PARAM_TOR,bind.lstTorAudio.getIdex())
         odpAudio.addProperty(PARAM_TRYB,bind.lstTrybAudio.getIdex())
@@ -275,6 +302,16 @@ class UstawieniaFragment : Fragment() {
         odpAudio.addProperty(PARAM_PRAWY_ODTWARZANIE,bind.lstUtwory.getIdex())
         odpAudio.addProperty(PARAM_UWZG_RADAR, booleanToInt(bind.swAudioRadar.isChecked))
         odpAudio.addProperty(PARAM_UWZG_ZYROSKOP, booleanToInt(bind.swAudioZyroskop.isChecked))
+
+        for (i in 1..utworyLista1.size - 1){
+            odpAudioL1.add(utworyLista1.get(i))
+        }
+        odpAudio.add(PARAM_LISTA1,odpAudioL1)
+        for (i in 1..utworyLista2.size - 1){
+            odpAudioL2.add(utworyLista2.get(i))
+        }
+        odpAudio.add(PARAM_LISTA2,odpAudioL2)
+
         odpowiedz.add(OBIEKT_AUDIO,odpAudio)
         //parametry dla obiektu ledy
         odpLedy.addProperty(PARAM_LEDY_WLACZANE, booleanToInt(bind.swPodswietlenie.isChecked))
@@ -283,6 +320,13 @@ class UstawieniaFragment : Fragment() {
         //parametry dla obiektu naped
         odpNaped.addProperty(PARAM_AUTOSTOP,booleanToInt(bind.swAutostop.isChecked))
         odpowiedz.add(OBIEKT_NAPED,odpNaped)
+        //parametry dla obiektu radar
+
+        odpRadar.addProperty(PARAM_KAT,kat)
+        odpRadarRuch180.addProperty(PARAM_RUCH180_STARTKAT,ruch180start)
+        odpRadarRuch180.addProperty(PARAM_RUCH180_WYKONAJ,ruch180wykonaj)
+        odpRadar.add(PARAM_RUCH180,odpRadarRuch180)
+        odpowiedz.add(OBIEKT_RADAR,odpRadar)
 
         return odpowiedz
     }

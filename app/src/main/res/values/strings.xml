@@ -50,14 +50,19 @@
 
     <string name="trybAudio_desc">Tryb audio:</string>
     <string name="trybAudio_normalny">Normalny</string>
+<!-- wyłączone , bo różne scalaki rozjeżdzają audio -->
+<!--
     <string name="trybAudio_stereoMuzyka">Stereo muzyka</string>
     <string name="trybAudio_stereoEfekty">Stereo efekty</string>
+-->
     <string name="trybAudio_wyciszanie">Wyciszanie</string>
     <string name="trybAudio_pauzowanie">Pauzowanie</string>
     <string-array name="arrTrybAudio">
         <item>@string/trybAudio_normalny</item>
+<!--
         <item>@string/trybAudio_stereoMuzyka</item>
         <item>@string/trybAudio_stereoEfekty</item>
+-->
         <item>@string/trybAudio_wyciszanie</item>
         <item>@string/trybAudio_pauzowanie</item>
     </string-array>

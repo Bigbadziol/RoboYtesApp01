@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
     private val robotSparowany : Boolean = false
     lateinit var deviceSocket: BluetoothSocket
     var incDataBuffer =""               // data buffer
+    var aktualneUstawieniaRobota=""     // w stringu obiekt json reprezentujacy komplet ustawien
 ///    lateinit var dataHandler: Handler   //  handle  incomming controller data
     lateinit var stateHandler : Handler // to refresh CustomConnction -state
 
@@ -135,6 +136,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                     when {
                         it.name.contains(ROBOTNAME_SIGNATURE,ignoreCase = true)->{
                             Log.d(TAG,"(incData), RobotYtes")
+                            aktualneUstawieniaRobota = incDataBuffer
                             replaceFragment(SterowanieFragment(),incDataBuffer)
                         }
                         else->{
@@ -328,7 +330,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
 
             bind.connection.btnUstawienia.setOnClickListener {
                 Log.d(TAG, "btn Ustawienia - klik")
-                replaceFragment(UstawieniaFragment(), "") // Fragment ustawienia
+                replaceFragment(UstawieniaFragment(), aktualneUstawieniaRobota) // Fragment ustawienia
                 bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
             }
 /*
@@ -394,11 +396,19 @@ class MainActivity : AppCompatActivity(),ICommunicator {
      */
     override fun kanalUstawienia(msg: String) {
         Log.d(TAG,"(MainActivity) wiadomosc od(ustawienia): $msg")
+        //zamknij - bez modyfikacji danych
+        if (msg.equals("{}")) {
+            bind.connection.ustawStan(StanPolaczenia.POLACZONO);
+            return
+        }
+        //wyslij nowe ustawienia
         if (!::deviceSocket.isInitialized) {
             Log.d(TAG,"Zmienna deviceSoket nie została zainicjalizowana.")
             return
         }
         if (deviceSocket.isConnected){
+            //Powracajace dane z fragmentu uaktualniaja nasze ustawienia
+            aktualneUstawieniaRobota = msg
             //Uwaga! znak '\n' informuje kontroler o koncu komunikatu, niezbedny
             val msgEnd = msg + '\n'
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())

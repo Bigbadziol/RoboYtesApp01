@@ -15,14 +15,22 @@ var daneTestoweOdpowiedz = """
     "UZ": 0,
     "UR": 0,
     "L1": [
-      "Jazz 1",
-      "Jazz 2",
-      "Jazz 3"
+        "Jazz 1",
+        "Jazz 2",
+        "Jazz 3",
+        "Wypelniacz tresci 1A",
+        "Wypelniacz tresci 2A",
+        "Wypelniacz tresci 3A",
+        "Wypelniacz tresci 4A"      
     ],
     "L2": [
-      "Kung-fu Panda",
-      "Deadpool - Bodies",
-      "Fight back"
+        "Kung-fu Panda",
+        "Deadpool - Bodies",
+        "Fight back",
+        "Wypelniacz tresci 1B",
+        "Wypelniacz tresci 2B",
+        "Wypelniacz tresci 3B",
+        "Wypelniacz tresci 4B"
     ]
   },
   "ledy": {
@@ -32,6 +40,13 @@ var daneTestoweOdpowiedz = """
       "G": 255,
       "B": 128
     }
+  },
+  "radar": {
+  "KAT":90,
+      "RUCH180":{
+        "STARTKAT":90,
+        "WYKONAJ":0
+      }
   }
 }
 """.trimIndent()

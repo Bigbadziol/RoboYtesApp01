@@ -35,3 +35,12 @@ const val OBIEKT_LEDY = "ledy"
 const val PARAM_LEDY_WLACZANE="WLACZONE"
 const val PARAM_KOLOR="KOLOR"
 
+/*
+    Parametry powiazane z radarem
+ */
+const val OBIEKT_RADAR = "radar"
+const val PARAM_KAT ="KAT"
+const val PARAM_RUCH180="RUCH180"
+const val PARAM_RUCH180_STARTKAT ="STARTKAT"
+const val PARAM_RUCH180_WYKONAJ = "WYKONAJ"
+
