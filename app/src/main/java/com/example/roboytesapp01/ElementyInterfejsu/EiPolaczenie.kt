@@ -93,7 +93,7 @@ class EiPolaczenie  (
     }
 
     private fun interfejsEdycja(){
-        btnPolaczenie.isEnabled = true
+        btnPolaczenie.isEnabled = false
         btnPolaczenie.text = resources.getString(R.string.btnPolaczRobot_rozlacz)
         tvStatus.text = resources.getString(R.string.stateEdition)
         btnUstawienia.isEnabled = false

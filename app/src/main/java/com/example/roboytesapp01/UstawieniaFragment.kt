@@ -225,12 +225,12 @@ class UstawieniaFragment : Fragment() {
             //wybór utworu (index na liście)
             prawyOdtwarzanie = testujParametrLiczba(audio, PARAM_PRAWY_ODTWARZANIE,0,rozmiar-1,0)
             bind.lstUtwory.setIndex(prawyOdtwarzanie)
-            //glosnosc lewy
+            //glosnosc lewy (efekty)
             lewyGlosnosc = testujParametrLiczba(audio, PARAM_LEWY_GLOSNOSC,0, 30,20)
-            bind.suwGlosnoscMuzyka.set(lewyGlosnosc)
-            //glosnosc prawy
+            bind.suwGlosnoscEfekty.set(lewyGlosnosc)
+            //glosnosc prawy (muzyka)
             prawyGlosnosc = testujParametrLiczba(audio, PARAM_PRAWY_GLOSNOSC,0, 30,20)
-            bind.suwGlosnoscEfekty.set(prawyGlosnosc)
+            bind.suwGlosnoscMuzyka.set(prawyGlosnosc)
             //wyciszenie
             wyciszenie = testujParametrLiczba(audio, PARAM_POZIOM_WYCISZENIA,1,15,10)
             bind.suwWyciszenie.set(wyciszenie)
@@ -296,8 +296,8 @@ class UstawieniaFragment : Fragment() {
         //parametry dla obiektu audio
         odpAudio.addProperty(PARAM_TOR,bind.lstTorAudio.getIdex())
         odpAudio.addProperty(PARAM_TRYB,bind.lstTrybAudio.getIdex())
-        odpAudio.addProperty(PARAM_LEWY_GLOSNOSC,bind.suwGlosnoscMuzyka.getValue())
-        odpAudio.addProperty(PARAM_PRAWY_GLOSNOSC,bind.suwGlosnoscEfekty.getValue())
+        odpAudio.addProperty(PARAM_PRAWY_GLOSNOSC,bind.suwGlosnoscMuzyka.getValue())
+        odpAudio.addProperty(PARAM_LEWY_GLOSNOSC,bind.suwGlosnoscEfekty.getValue())
         odpAudio.addProperty(PARAM_POZIOM_WYCISZENIA,bind.suwWyciszenie.getValue())
         odpAudio.addProperty(PARAM_PRAWY_ODTWARZANIE,bind.lstUtwory.getIdex())
         odpAudio.addProperty(PARAM_UWZG_RADAR, booleanToInt(bind.swAudioRadar.isChecked))

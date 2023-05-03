@@ -307,7 +307,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
                                 }
                                 ConnectedThread(deviceSocket).cancel()
                             } else {
-                                Log.d(TAG, "[Rozlaczanie] -> Socket nie jest polaczony");
+                                Log.d(TAG, "[Rozlaczanie] -> Socket nie jest polaczony")
                                 stateHandler.post {
                                     bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
                                 }
@@ -331,7 +331,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
             bind.connection.btnUstawienia.setOnClickListener {
                 Log.d(TAG, "btn Ustawienia - klik")
                 replaceFragment(UstawieniaFragment(), aktualneUstawieniaRobota) // Fragment ustawienia
-                bind.connection.ustawStan(StanPolaczenia.BLAD_POLACZENIA)
+                bind.connection.ustawStan(StanPolaczenia.EDYCJA)
             }
 /*
             // PRZYCISK TESTOWY
@@ -387,7 +387,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())
         }else{
             Log.d(TAG,"(MainActivity)(ch:sterowanie)-> Socket nie polaczony!")
-            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO);
+            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO)
         }
     }
 
@@ -398,7 +398,7 @@ class MainActivity : AppCompatActivity(),ICommunicator {
         Log.d(TAG,"(MainActivity) wiadomosc od(ustawienia): $msg")
         //zamknij - bez modyfikacji danych
         if (msg.equals("{}")) {
-            bind.connection.ustawStan(StanPolaczenia.POLACZONO);
+            bind.connection.ustawStan(StanPolaczenia.POLACZONO)
             return
         }
         //wyslij nowe ustawienia
@@ -412,10 +412,10 @@ class MainActivity : AppCompatActivity(),ICommunicator {
             //Uwaga! znak '\n' informuje kontroler o koncu komunikatu, niezbedny
             val msgEnd = msg + '\n'
             ConnectedThread(deviceSocket).write(msgEnd.toByteArray())
-            bind.connection.ustawStan(StanPolaczenia.POLACZONO);
+            bind.connection.ustawStan(StanPolaczenia.POLACZONO)
         }else{
             Log.d(TAG,"(MainActivity)(ch:ustawienia)-> Socket nie polaczony!")
-            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO);
+            bind.connection.ustawStan(StanPolaczenia.ROZLACZONO)
         }
     }
 
